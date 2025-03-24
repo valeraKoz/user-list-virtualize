@@ -17,10 +17,14 @@ services:
       interval: 5s
       timeout: 2s
       retries: 20
+    # Добавляем том для хранения данных
+    volumes:
+      - postgres_volumes:/var/lib/postgresql/data  # Стандартная папка данных PostgreSQL
 
   # Сервер на Express
   api:
     build: .
+    container_name: api
     ports:
       - '3000:3000' # Express-сервер будет доступен на 3000 порту
     # Команда запуска (выполняется после сборки)
@@ -35,22 +39,10 @@ services:
       - prisma-network
 
 
-#  # Сервис для генерации тестовых данных
-#  gen-fake-data:
-#    build: .
-#    env_file:
-#      - .env.prod
-#    # Команда для генерации данных (с задержкой для гарантии готовности сервера)
-#    command: sh -c "sleep 5 && node dist/generate-data.js"  # Ожидание + запуск генератора
-#    # Зависимости от других сервисов
-#    depends_on:
-#      - postgres_db  # Требуем запущенную БД
-#      - api    # И работающий сервер
-
 networks:
   prisma-network:
 
 # Определение постоянных томов для хранения данных
 volumes:
-  postgres_data: {} # Имя тома для данных PostgreSQL
+  postgres_volumes:  # Имя тома для данных PostgreSQL
   # Автоматическое создание тома при первом запуске

@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf dist && tsc",
     "start": "npm run build && npm run server && npm run generate",
     "server": "node dist/index.js",
     "generate": "node dist/generate-data.js",
