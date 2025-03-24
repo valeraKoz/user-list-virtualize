@@ -1,0 +1,23 @@
+@charset "UTF-8";
+.scrolled-component {
+  padding-right: 2px;
+  overflow-y: scroll !important; /* Всегда показывать вертикальный скролл */
+  scrollbar-width: auto !important; /* Для Firefox */
+}
+
+/* Стилизация для Chrome/Edge/Safari */
+.scrolled-component::-webkit-scrollbar {
+  width: 12px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.scrolled-component::-webkit-scrollbar-thumb {
+  background: #555 !important;
+  cursor: move !important;
+}
+
+.scrolled-component::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
+}
+
+/*# sourceMappingURL=style.css.map */

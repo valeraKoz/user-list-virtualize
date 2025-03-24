@@ -1,0 +1,56 @@
+services:
+  postgres_db:
+    image: postgres:15
+    hostname: postgres_db
+    container_name: postgres_db
+    restart: always
+    environment:
+      - POSTGRES_DB=users_db      # Название базы данных
+      - POSTGRES_USER=admin       # Логин админа
+      - POSTGRES_PASSWORD=secret  # Пароль админа
+    ports:
+      - "5432:5432"
+    networks:
+      - prisma-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d users_db" ]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+  # Сервер на Express
+  api:
+    build: .
+    ports:
+      - '3000:3000' # Express-сервер будет доступен на 3000 порту
+    # Команда запуска (выполняется после сборки)
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"  # Миграции + запуск сервера
+    # Зависимости между сервисами
+    depends_on:
+      postgres_db:
+        condition: service_healthy  # Ждем успешного healthcheck БД
+    env_file:
+      - .env.prod
+    networks:
+      - prisma-network
+
+
+#  # Сервис для генерации тестовых данных
+#  gen-fake-data:
+#    build: .
+#    env_file:
+#      - .env.prod
+#    # Команда для генерации данных (с задержкой для гарантии готовности сервера)
+#    command: sh -c "sleep 5 && node dist/generate-data.js"  # Ожидание + запуск генератора
+#    # Зависимости от других сервисов
+#    depends_on:
+#      - postgres_db  # Требуем запущенную БД
+#      - api    # И работающий сервер
+
+networks:
+  prisma-network:
+
+# Определение постоянных томов для хранения данных
+volumes:
+  postgres_data: {} # Имя тома для данных PostgreSQL
+  # Автоматическое создание тома при первом запуске
